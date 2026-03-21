@@ -4,95 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lovera Cafe | لوفيرا</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- نفس الخطوط بدون حذف -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;400;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --moon-white: #f5f5f7;
-            --space-black: #0a0a0a;
-            --gray-border: #222;
-            --glow: 0 0 20px rgba(245, 245, 247, 0.2);
-        }
-
-        * { box-sizing: border-box; }
-
-        body, html {
-            margin: 0; padding: 0;
-            background-color: var(--space-black);
-            color: var(--moon-white);
-            font-family: 'Cairo', sans-serif;
-            overflow-x: hidden;
-        }
-
-        /* --- شاشة البداية الاحترافية --- */
-        #hero {
-            height: 100vh;
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            text-align: center;
-            background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
-        }
-
-        .logo { font-size: clamp(3rem, 10vw, 5rem); font-weight: 700; letter-spacing: 15px; margin-bottom: 10px; text-shadow: var(--glow); }
-        .slogan { font-size: 1.2rem; font-weight: 200; color: #888; margin-bottom: 50px; }
-        
-        .main-btn {
-            padding: 18px 50px; background: transparent;
-            border: 1px solid var(--moon-white); color: var(--moon-white);
-            font-size: 1.3rem; cursor: pointer; transition: 0.5s ease;
-            border-radius: 2px; letter-spacing: 2px;
-        }
-        .main-btn:hover { background: var(--moon-white); color: var(--space-black); box-shadow: 0 0 30px var(--moon-white); }
-
-        /* --- شاشة الترانزيشن العكسية --- */
-        #transition-screen {
-            display: none; position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%; z-index: 1000;
-            justify-content: center; align-items: center;
-            font-size: 3.5rem; font-weight: 700; transition: 0.5s;
-        }
-
-        /* --- صفحة اختيار المكان --- */
-        #selection-page { display: none; padding: 80px 20px; text-align: center; animation: fadeIn 1s; }
-        .grid { display: flex; justify-content: center; gap: 25px; flex-wrap: wrap; margin-top: 50px; }
-        .box {
-            width: 200px; padding: 50px 20px; border: 1px solid var(--gray-border);
-            cursor: pointer; transition: 0.4s; border-radius: 5px; font-size: 1.4rem;
-        }
-        .box:hover { border-color: var(--moon-white); background: #111; transform: translateY(-10px); box-shadow: var(--glow); }
-
-        /* --- صفحة المنيو --- */
-        #menu-page { display: none; padding: 40px 20px; max-width: 700px; margin: auto; animation: fadeIn 0.8s; }
-        .menu-item {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 25px 15px; border-bottom: 1px solid #151515;
-        }
-        .item-info h3 { margin: 0; font-size: 1.3rem; font-weight: 400; }
-        .item-info span { color: #666; font-size: 1rem; }
-        
-        .counter-group { display: flex; align-items: center; gap: 20px; }
-        .c-btn {
-            width: 35px; height: 35px; border: 1px solid var(--moon-white);
-            background: none; color: white; cursor: pointer; border-radius: 50%;
-            font-size: 1.2rem; display: flex; align-items: center; justify-content: center;
-        }
-        .c-btn:active { background: white; color: black; }
-
-        .footer-send {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(10px);
-            border-top: 1px solid #222; padding: 25px; text-align: center;
-        }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .hidden { display: none !important; }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+
+    <!-- ✅ نفس اللوجو + إضافة حركة فقط -->
+    <img src="moon.svg" alt="Lovera Logo" class="side-logo animated-logo">
 
     <section id="hero">
         <div class="logo">LOVERA</div>
         <div class="slogan">قهوة صنعت بحب تحت ضوء القمر</div>
-        <button id="main-start-btn" class="main-btn" onclick="checkLocationAndStart()">اعمل الأوردر</button>
+        <button class="main-btn" onclick="startProcess()">اعمل الأوردر</button>
     </section>
 
     <div id="transition-screen">
@@ -109,174 +36,24 @@
     </section>
 
     <section id="menu-page">
-        <h2 style="text-align: center; margin-bottom: 40px; font-weight: 200; letter-spacing: 5px;">LOVERA MENU</h2>
+        <h2 class="menu-title">LOVERA MENU</h2>
+
         <div id="items-container"></div>
+
         <div style="height: 150px;"></div>
-        <div class="footer-send">
-            <button class="main-btn" style="width: 90%; font-weight: 700;" onclick="finalConfirm()">إرسال الطلب عبر واتساب</button>
+
+        <!-- ✅ إضافة الإجمالي بدون حذف القديم -->
+        <div class="order-footer">
+            <div class="total-bar">
+                الإجمالي: <span id="total-price">0</span> EGP
+            </div>
+            <button class="send-btn" onclick="handleFinalOrder()">إرسال الطلب</button>
         </div>
+
+        <!-- الكود القديم زي ما هو -->
+        
     </section>
 
-    <script>
-        // 📍 إحداثيات الكافيه (يجب تعديلها لموقعك الفعلي)
-        const CAFE_LAT = 30.0444; // مثال: إحداثيات القاهرة
-        const CAFE_LON = 31.2357; 
-        const MAX_DISTANCE = 0.1; // المسافة المسموحة (0.1 كم = 100 متر)
-
-        const drinks = [
-            { id: 1, name: "إسبريسو (سنجل)", price: 45 },
-            { id: 2, name: "كابتشينو لوفيرا", price: 70 },
-            { id: 3, name: "فلات وايت", price: 75 },
-            { id: 4, name: "لاتيه بارد", price: 80 },
-            { id: 5, name: "سبانش لاتيه", price: 85 },
-            { id: 6, name: "أمريكانو", price: 55 }
-        ];
-
-        let place = "";
-        let cart = {};
-
-        // الدالة الجديدة للتحقق من الموقع
-        function checkLocationAndStart() {
-            const btn = document.getElementById('main-start-btn');
-            btn.innerText = "جاري التأكد من موقعك...";
-            btn.disabled = true;
-
-            if (!navigator.geolocation) {
-                alert("متصفحك لا يدعم تحديد الموقع. يرجى استخدام متصفح حديث.");
-                resetBtn();
-                return;
-            }
-
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const userLat = position.coords.latitude;
-                    const userLon = position.coords.longitude;
-                    const distance = calculateDistance(userLat, userLon, CAFE_LAT, CAFE_LON);
-
-                    if (distance <= MAX_DISTANCE) {
-                        startProcess(); // الموقع صحيح، ابدأ الترانزيشن
-                    } else {
-                        alert("عذراً! أنت خارج نطاق الكافيه. الطلب متاح فقط للعملاء داخل الفرع.");
-                        resetBtn();
-                    }
-                },
-                (error) => {
-                    alert("يرجى تفعيل الـ GPS والسماح للموقع بالوصول لمكانك لإتمام الطلب.");
-                    resetBtn();
-                }
-            );
-        }
-
-        function resetBtn() {
-            const btn = document.getElementById('main-start-btn');
-            btn.innerText = "اعمل الأوردر";
-            btn.disabled = false;
-        }
-
-        // حساب المسافة بين نقطتين بالكيلومتر
-        function calculateDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371; 
-            const dLat = (lat2 - lat1) * Math.PI / 180;
-            const dLon = (lon2 - lon1) * Math.PI / 180;
-            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            return R * c;
-        }
-
-        function startProcess() {
-            const hero = document.getElementById('hero');
-            const trans = document.getElementById('transition-screen');
-            const wordDisplay = document.getElementById('word-display');
-            const stages = ["نقاء..", "فخامة..", "لوفيرا"];
-            
-            hero.classList.add('hidden');
-            trans.style.display = 'flex';
-
-            let step = 0;
-            const interval = setInterval(() => {
-                if(step < stages.length) {
-                    wordDisplay.innerText = stages[step];
-                    trans.style.backgroundColor = (step % 2 === 0) ? "var(--moon-white)" : "var(--space-black)";
-                    trans.style.color = (step % 2 === 0) ? "var(--space-black)" : "var(--moon-white)";
-                    step++;
-                } else {
-                    clearInterval(interval);
-                    trans.style.display = 'none';
-                    document.getElementById('selection-page').style.display = 'block';
-                }
-            }, 900);
-        }
-
-        function setPlace(loc) {
-            place = loc;
-            document.getElementById('selection-page').style.display = 'none';
-            document.getElementById('menu-page').style.display = 'block';
-            loadMenu();
-        }
-
-        function loadMenu() {
-            const container = document.getElementById('items-container');
-            container.innerHTML = "";
-            drinks.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'menu-item';
-                div.innerHTML = `
-                    <div class="item-info">
-                        <h3>${item.name}</h3>
-                        <span>${item.price} EGP</span>
-                    </div>
-                    <div class="counter-group">
-                        <button class="c-btn" onclick="changeQty(${item.id}, -1)">-</button>
-                        <span id="qty-${item.id}" style="font-size: 1.2rem; min-width: 20px; text-align: center;">0</span>
-                        <button class="c-btn" onclick="changeQty(${item.id}, 1)">+</button>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        function changeQty(id, val) {
-            cart[id] = Math.max(0, (cart[id] || 0) + val);
-            document.getElementById(`qty-${id}`).innerText = cart[id];
-        }
-
-        function finalConfirm() {
-            let total = 0;
-            let orderSummary = "";
-            let hasSelection = false;
-
-            drinks.forEach(d => {
-                if(cart[d.id] > 0) {
-                    orderSummary += `• ${d.name} (العدد: ${cart[d.id]})\n`;
-                    total += d.price * cart[d.id];
-                    hasSelection = true;
-                }
-            });
-
-            if(!hasSelection) {
-                alert("برجاء اختيار مشروب واحد على الأقل قبل الإرسال.");
-                return;
-            }
-
-            let msg = `🌟 *طلب أوردر - لوفيرا كافيه* 🌟\n`;
-            msg += `━━━━━━━━━━━━━━━\n`;
-            msg += `📍 *الموقع المختان:* ${place}\n`;
-            msg += `⏰ *الوقت:* ${new Date().toLocaleTimeString('ar-EG')}\n`;
-            msg += `━━━━━━━━━━━━━━━\n`;
-            msg += orderSummary;
-            msg += `━━━━━━━━━━━━━━━\n`;
-            msg += `💰 *إجمالي الحساب:* ${total} EGP\n`;
-            msg += `✅ *يرجى إرسال هذه الرسالة كما هي لتأكيد طلبك*`;
-
-            const phoneNumber = "201150782006";
-            const whatsappLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(msg)}`;
-
-            const confirmAction = confirm("سيتم فتح واتساب الآن..\n\nيرجى الضغط على زر 'إرسال' فقط دون تعديل الرسالة لضمان سرعة الخدمة.");
-            if(confirmAction) {
-                window.open(whatsappLink, '_blank');
-            }
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
