@@ -1,6 +1,33 @@
-const CAFE_LAT = 31.0409; 
-const CAFE_LON = 31.3785; 
-const MAX_DISTANCE = 0.2; 
+const CAFE_LAT = 30.833999;
+const CAFE_LON = 30.541444;
+const MAX_DISTANCE = 0.2;
+
+navigator.geolocation.getCurrentPosition(position => {
+    const userLat = position.coords.latitude;
+    const userLon = position.coords.longitude;
+
+    const distance = getDistance(userLat, userLon, CAFE_LAT, CAFE_LON);
+
+    if (distance <= MAX_DISTANCE) {
+        console.log("✅ انت جوه الكافيه");
+    } else {
+        console.log("❌ انت بعيد عن الكافيه");
+    }
+});
+
+function getDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+
+    const a =
+        Math.sin(dLat/2) ** 2 +
+        Math.cos(lat1 * Math.PI / 180) *
+        Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLon/2) ** 2;
+
+    return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+}
 
 const menuData = {
     "Italian Coffee": [
