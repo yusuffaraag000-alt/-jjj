@@ -1,33 +1,9 @@
-const CAFE_LAT = 30.833999;
-const CAFE_LON = 30.541444;
-const MAX_DISTANCE = 0.2;
+const CAFE_LAT = 30.828806; // الاحداثي الجديد
+const CAFE_LON = 30.538167;
+const MAX_DISTANCE = 0.04; // 40 متر
 
-navigator.geolocation.getCurrentPosition(position => {
-    const userLat = position.coords.latitude;
-    const userLon = position.coords.longitude;
-
-    const distance = getDistance(userLat, userLon, CAFE_LAT, CAFE_LON);
-
-    if (distance <= MAX_DISTANCE) {
-        console.log("✅ انت جوه الكافيه");
-    } else {
-        console.log("❌ انت بعيد عن الكافيه");
-    }
-});
-
-function getDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371;
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-
-    const a =
-        Math.sin(dLat/2) ** 2 +
-        Math.cos(lat1 * Math.PI / 180) *
-        Math.cos(lat2 * Math.PI / 180) *
-        Math.sin(dLon/2) ** 2;
-
-    return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
-}
+let place = "";
+let cart = {};
 
 const menuData = {
     "Italian Coffee": [
@@ -97,18 +73,35 @@ const menuData = {
     ]
 };
 
-let place = "";
-let cart = {};
+// ✅ دالة حساب المسافة
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+
+    const a =
+        Math.sin(dLat / 2) ** 2 +
+        Math.cos(lat1 * Math.PI / 180) *
+        Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLon / 2) ** 2;
+
+    return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+}
 
 function startProcess() {
     document.getElementById('hero').style.display = 'none';
+
     const trans = document.getElementById('transition-screen');
     const wordDisplay = document.getElementById('word-display');
+
     const stages = ["نقاء", "فخامة", "لوفيرا"];
+
     trans.style.display = 'flex';
+
     let step = 0;
+
     const interval = setInterval(() => {
-        if(step < stages.length) {
+        if (step < stages.length) {
             wordDisplay.innerText = stages[step];
             trans.style.backgroundColor = (step % 2 === 0) ? "#fff" : "#000";
             trans.style.color = (step % 2 === 0) ? "#000" : "#fff";
@@ -131,77 +124,113 @@ function setPlace(loc) {
 function loadMenu() {
     const container = document.getElementById('items-container');
     container.innerHTML = "";
+
     for (const category in menuData) {
         const section = document.createElement('div');
         section.className = 'category-section';
+
         section.innerHTML = `<div class="category-title">${category}</div>`;
+
         menuData[category].forEach(item => {
             const card = document.createElement('div');
             card.className = 'menu-card';
+
             card.innerHTML = `
                 <div class="controls">
-                    <button class="q-btn" onclick="changeQty(${item.id}, -1)">-</button>
-                    <span class="q-num" id="qty-${item.id}">0</span>
-                    <button class="q-btn" onclick="changeQty(${item.id}, 1)">+</button>
+                    <button onclick="changeQty(${item.id}, -1)">-</button>
+                    <span id="qty-${item.id}">0</span>
+                    <button onclick="changeQty(${item.id}, 1)">+</button>
                 </div>
-                <div class="item-info">
-                    <span class="item-name">${item.name}</span>
-                    <span class="item-price">${item.price} EGP</span>
+                <div>
+                    <span>${item.name}</span>
+                    <span>${item.price} EGP</span>
                 </div>
             `;
+
             section.appendChild(card);
         });
+
         container.appendChild(section);
     }
 }
 
 function changeQty(id, val) {
     cart[id] = Math.max(0, (cart[id] || 0) + val);
-    document.getElementById(`qty-${id}`).innerText = cart[id];
+
+    const el = document.getElementById(`qty-${id}`);
+    if (el) el.innerText = cart[id];
+
     updateTotal();
 }
 
 function updateTotal() {
     let total = 0;
+
     for (let cat in menuData) {
-        menuData[cat].forEach(d => { if(cart[d.id]) total += d.price * cart[d.id]; });
-    }
-    document.getElementById('total-price').innerText = total;
-}
-
-function handleFinalOrder() {
-    if (!navigator.geolocation) return alert("GPS غير مدعوم.");
-    navigator.geolocation.getCurrentPosition((pos) => {
-        const dist = calculateDistance(pos.coords.latitude, pos.coords.longitude, CAFE_LAT, CAFE_LON);
-        if (dist <= MAX_DISTANCE) sendOrder();
-        else alert("يجب أن تكون داخل الكافيه لطلب الأوردر.");
-    }, () => alert("يرجى تفعيل الموقع."));
-}
-
-function calculateDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371; 
-    const dLat = (lat2-lat1)*Math.PI/180;
-    const dLon = (lon2-lon1)*Math.PI/180;
-    const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
-    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-}
-
-function sendOrder() {
-    let msg = `🌟 *طلب لوفيرا كافيه* 🌟\n📍 *المكان:* ${place}\n\n`;
-    let total = 0;
-    for (let cat in menuData) {
-        menuData[cat].forEach(d => {
-            if(cart[d.id] > 0) {
-                msg += `• ${d.name} (x${cart[d.id]})\n`;
-                total += d.price * cart[d.id];
+        menuData[cat].forEach(item => {
+            if (cart[item.id]) {
+                total += item.price * cart[item.id];
             }
         });
     }
-    if (total === 0) return alert("اختر مشروباتك أولاً.");
-    msg += `\n💰 *الإجمالي:* ${total} EGP`;
+
+    const totalEl = document.getElementById('total-price');
+    if (totalEl) totalEl.innerText = total;
+}
+
+// ✅ هنا الشرط الصح للموقع
+function handleFinalOrder() {
+    if (!navigator.geolocation) {
+        alert("المتصفح لا يدعم GPS");
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+        (pos) => {
+            const userLat = pos.coords.latitude;
+            const userLon = pos.coords.longitude;
+            const accuracy = pos.coords.accuracy;
+
+            const distance = calculateDistance(userLat, userLon, CAFE_LAT, CAFE_LON);
+
+            if (distance <= MAX_DISTANCE && accuracy <= 50) {
+                sendOrder();
+            } else {
+                alert("❌ لازم تكون داخل 40 متر من الكافيه");
+            }
+        },
+        () => {
+            alert("فعّل الموقع من الموبايل");
+        },
+        {
+            enableHighAccuracy: true
+        }
+    );
+}
+
+function sendOrder() {
+    let msg = `🌟 طلب لوفيرا كافيه 🌟\n📍 المكان: ${place}\n\n`;
+    let total = 0;
+
+    for (let cat in menuData) {
+        menuData[cat].forEach(item => {
+            if (cart[item.id] > 0) {
+                msg += `• ${item.name} (x${cart[item.id]})\n`;
+                total += item.price * cart[item.id];
+            }
+        });
+    }
+
+    if (total === 0) {
+        alert("اختر مشروباتك أولاً");
+        return;
+    }
+
+    msg += `\n💰 الإجمالي: ${total} EGP`;
+
     window.open(`https://wa.me/201150782006?text=${encodeURIComponent(msg)}`);
 }
-// ✅ إضافة تحسين بدون حذف أي سطر
+
 document.addEventListener("DOMContentLoaded", () => {
     updateTotal();
 });
