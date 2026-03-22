@@ -4,54 +4,55 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lovera Cafe | لوفيرا</title>
-
     <link rel="stylesheet" href="style.css">
-
-    <!-- نفس الخطوط بدون حذف -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <!-- ✅ نفس اللوجو + إضافة حركة فقط -->
     <img src="moon.svg" alt="Lovera Logo" class="side-logo animated-logo">
 
+    <!-- صفحة البداية -->
     <section id="hero">
         <div class="logo">LOVERA</div>
         <div class="slogan">قهوة صنعت بحب تحت ضوء القمر</div>
         <button class="main-btn" onclick="startProcess()">اعمل الأوردر</button>
     </section>
 
+    <!-- شاشة الانتقال -->
     <div id="transition-screen">
         <div id="word-display"></div>
     </div>
 
+    <!-- اختيار المكان -->
     <section id="selection-page">
         <h1 style="letter-spacing: 2px;">أين ستجلس اليوم؟</h1>
         <div class="grid">
             <div class="box" onclick="setPlace('Side A')">Side A</div>
             <div class="box" onclick="setPlace('Side B')">Side B</div>
-            <div class="box" onclick="setPlace('ترابيزة')">ترابيزة</div>
+            <div class="box" onclick="setPlace('Bar')">البار (5 كراسي)</div>
+            <div class="box" onclick="setPlace('Lounge')">الصالة (3 ترابيزات)</div>
         </div>
     </section>
 
-    <section id="menu-page">
+    <!-- اختيار رقم الترابيزة أو كرسي البار -->
+    <section id="seat-page" style="display:none;">
+        <h1 style="letter-spacing: 2px;">اختر رقم الترابيزة أو كرسي البار</h1>
+        <div class="grid" id="seat-grid">
+            <!-- الأزرار هتتولد ديناميكياً -->
+        </div>
+        <button class="main-btn" onclick="backToPlaceSelection()">رجوع</button>
+    </section>
+
+    <!-- صفحة المنيو -->
+    <section id="menu-page" style="display:none;">
         <h2 class="menu-title">LOVERA MENU</h2>
-
         <div id="items-container"></div>
-
         <div style="height: 150px;"></div>
-
-        <!-- ✅ إضافة الإجمالي بدون حذف القديم -->
         <div class="order-footer">
-            <div class="total-bar">
-                الإجمالي: <span id="total-price">0</span> EGP
-            </div>
+            الإجمالي: <span id="total-price">0</span> EGP
             <button class="send-btn" onclick="handleFinalOrder()">إرسال الطلب</button>
         </div>
-
-        <!-- الكود القديم زي ما هو -->
-        
     </section>
 
     <script src="script.js"></script>
