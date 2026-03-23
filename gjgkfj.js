@@ -2,9 +2,9 @@ const CAFE_LAT = 30.828806;
 const CAFE_LON = 30.538167;
 const MAX_DISTANCE = 0.04;
 
-let place = ""; 
-let seat = "";  
-let cart = {}; // السلة الآن ستخزن كائنات تحتوي على (الاسم، السعر، الكمية)
+let place = ""; // المكان العام (Side A/B/Bar/Lounge)
+let seat = "";  // رقم الترابيزة أو كرسي البار
+let cart = {}; 
 
 
 const menuData = {
@@ -176,7 +176,10 @@ const menuData = {
   ]
 }
 
+    // باقي الأصناف زي ما هم
 
+
+// حساب المسافة
 function calculateDistance(lat1, lon1, lat2, lon2) {
     const R = 6371;
     const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -204,19 +207,23 @@ function startProcess() {
     }, 800);
 }
 
+// اختيار المكان
 function setPlace(loc) {
     place = loc;
+    // لو Bar أو Lounge نفتح اختيار رقم الكرسي / الترابيزة
     if(loc === 'Bar' || loc === 'Lounge'){
         document.getElementById('selection-page').style.display = 'none';
         document.getElementById('seat-page').style.display = 'block';
         loadSeats();
         return;
     }
+    // أما Side A / B نروح على المنيو مباشرة
     document.getElementById('selection-page').style.display = 'none';
     document.getElementById('menu-page').style.display = 'block';
     loadMenu();
 }
 
+// توليد أزرار الأرقام
 function loadSeats() {
     const container = document.getElementById('seat-grid');
     container.innerHTML = "";
@@ -230,6 +237,7 @@ function loadSeats() {
     }
 }
 
+// اختيار الرقم
 function selectSeat(num){
     seat = num;
     document.getElementById('seat-page').style.display = 'none';
@@ -237,11 +245,16 @@ function selectSeat(num){
     loadMenu();
 }
 
+// زر الرجوع من اختيار الكرسي / الترابيزة
 function backToPlaceSelection(){
     document.getElementById('seat-page').style.display = 'none';
     document.getElementById('selection-page').style.display = 'block';
 }
 
+// تحميل المنيو
+// تغيير هيكل السلة ليتحمل النوع (سنجل/دبل) أو (عصير/سموثي)
+
+// تحميل المنيو مع دعم الحجمين
 function loadMenu() {
     const container = document.getElementById('items-container');
     container.innerHTML = "";
@@ -255,98 +268,104 @@ function loadMenu() {
             const card = document.createElement('div');
             card.className = 'menu-card';
             
-            let content = `<div class="item-info"><strong>${item.name}</strong></div>`;
-            let controls = "";
+            // تحديد هل الصنف له سعرين (S/D) أو (Juice/Smoothie) أو سعر واحد
+            let priceHTML = "";
+            let controlsHTML = "";
 
             if (item.price_s && item.price_d) {
-                // حالة سنجل ودبل
-                controls = `
-                <div class="size-option">
-                    <span>سنجل (${item.price_s} EGP)</span>
-                    <div class="controls">
-                        <button onclick="changeQty('${item.id}_s', -1, ${item.price_s}, '${item.name} - سنجل')">-</button>
-                        <span id="qty-${item.id}_s">0</span>
-                        <button onclick="changeQty('${item.id}_s', 1, ${item.price_s}, '${item.name} - سنجل')">+</button>
+                // حالة السنجل والدبل (القهوة)
+                priceHTML = `<div>${item.name}</div>`;
+                controlsHTML = `
+                    <div class="size-row">
+                        <span>سنجل (${item.price_s} EGP)</span>
+                        <div class="controls">
+                            <button onclick="changeQty('${item.id}_s', -1, ${item.price_s}, '${item.name} (سنجل)')">-</button>
+                            <span id="qty-${item.id}_s">0</span>
+                            <button onclick="changeQty('${item.id}_s', 1, ${item.price_s}, '${item.name} (سنجل)')">+</button>
+                        </div>
                     </div>
-                </div>
-                <div class="size-option">
-                    <span>دبل (${item.price_d} EGP)</span>
-                    <div class="controls">
-                        <button onclick="changeQty('${item.id}_d', -1, ${item.price_d}, '${item.name} - دبل')">-</button>
-                        <span id="qty-${item.id}_d">0</span>
-                        <button onclick="changeQty('${item.id}_d', 1, ${item.price_d}, '${item.name} - دبل')">+</button>
-                    </div>
-                </div>`;
+                    <div class="size-row">
+                        <span>دبل (${item.price_d} EGP)</span>
+                        <div class="controls">
+                            <button onclick="changeQty('${item.id}_d', -1, ${item.price_d}, '${item.name} (دبل)')">-</button>
+                            <span id="qty-${item.id}_d">0</span>
+                            <button onclick="changeQty('${item.id}_d', 1, ${item.price_d}, '${item.name} (دبل)')">+</button>
+                        </div>
+                    </div>`;
             } else if (item.juice && item.smoothie) {
-                // حالة عصير وسموثي
-                controls = `
-                <div class="size-option">
-                    <span>عصير (${item.juice} EGP)</span>
-                    <div class="controls">
-                        <button onclick="changeQty('${item.id}_j', -1, ${item.juice}, '${item.name} - عصير')">-</button>
-                        <span id="qty-${item.id}_j">0</span>
-                        <button onclick="changeQty('${item.id}_j', 1, ${item.juice}, '${item.name} - عصير')">+</button>
+                // حالة العصير والسموثي
+                priceHTML = `<div>${item.name}</div>`;
+                controlsHTML = `
+                    <div class="size-row">
+                        <span>عصير (${item.juice} EGP)</span>
+                        <div class="controls">
+                            <button onclick="changeQty('${item.id}_j', -1, ${item.juice}, '${item.name} (عصير)')">-</button>
+                            <span id="qty-${item.id}_j">0</span>
+                            <button onclick="changeQty('${item.id}_j', 1, ${item.juice}, '${item.name} (عصير)')">+</button>
+                        </div>
                     </div>
-                </div>
-                <div class="size-option">
-                    <span>سموثي (${item.smoothie} EGP)</span>
-                    <div class="controls">
-                        <button onclick="changeQty('${item.id}_sm', -1, ${item.smoothie}, '${item.name} - سموثي')">-</button>
-                        <span id="qty-${item.id}_sm">0</span>
-                        <button onclick="changeQty('${item.id}_sm', 1, ${item.smoothie}, '${item.name} - سموثي')">+</button>
-                    </div>
-                </div>`;
+                    <div class="size-row">
+                        <span>سموثي (${item.smoothie} EGP)</span>
+                        <div class="controls">
+                            <button onclick="changeQty('${item.id}_sm', -1, ${item.smoothie}, '${item.name} (سموثي)')">-</button>
+                            <span id="qty-${item.id}_sm">0</span>
+                            <button onclick="changeQty('${item.id}_sm', 1, ${item.smoothie}, '${item.name} (سموثي)')">+</button>
+                        </div>
+                    </div>`;
             } else {
-                // سعر واحد
-                controls = `
-                <div class="size-option">
-                    <span>${item.price} EGP</span>
+                // حالة السعر الموحد
+                priceHTML = `<div><span>${item.name}</span> <br> <span>${item.price} EGP</span></div>`;
+                controlsHTML = `
                     <div class="controls">
                         <button onclick="changeQty('${item.id}', -1, ${item.price}, '${item.name}')">-</button>
                         <span id="qty-${item.id}">0</span>
                         <button onclick="changeQty('${item.id}', 1, ${item.price}, '${item.name}')">+</button>
-                    </div>
-                </div>`;
+                    </div>`;
             }
 
-            card.innerHTML = content + controls;
+            card.innerHTML = priceHTML + controlsHTML;
             section.appendChild(card);
         });
         container.appendChild(section);
     }
 }
 
+// تعديل وظيفة تغيير الكمية لتسجيل السعر والاسم المختار
 function changeQty(key, val, price, fullName) {
     if (!cart[key]) {
         cart[key] = { qty: 0, price: price, name: fullName };
     }
+    
     cart[key].qty = Math.max(0, cart[key].qty + val);
+    
     const el = document.getElementById(`qty-${key}`);
     if (el) el.innerText = cart[key].qty;
+    
     updateTotal();
 }
 
-function updateTotal() {
+// تحديث الإجمالي بناءً على السلة الجديدة
+function updateTotal(){
     let total = 0;
+    // بنلف على كل مفتاح في السلة (زي 1_s أو 15) ونجمع أسعارهم
     for (let key in cart) {
-        total += cart[key].qty * cart[key].price;
+        if (cart[key].qty > 0) {
+            total += cart[key].qty * cart[key].price;
+        }
     }
     document.getElementById('total-price').innerText = total;
 }
 
-function handleFinalOrder(){
-    // إذا كنت تريد تجاوز GPS للتجربة، استدعِ sendOrder مباشرة
-    sendOrder();
-}
-
+// تعديل إرسال الطلب للواتساب ليقرأ من السلة الجديدة
 function sendOrder() {
     let note = document.getElementById('customer-note').value.trim();
     let seatInfo = seat ? ` (${place === 'Bar' ? 'كرسي' : 'ترابيزة'} ${seat})` : "";
-    let msg = `🌟 طلب لوفيرا كافيه 🌟\n📍 المكان: ${place}${seatInfo}\n\n`;
+    let msg = `🌟 طلب جديد - لوفيرا كافيه 🌟\n📍 المكان: ${place}${seatInfo}\n\n`;
 
     let total = 0;
     let hasItems = false;
 
+    // بنسحب البيانات من السلة (cart) مباشرة لأنها متخزن فيها الاسم بالحجم والسعر
     for (let key in cart) {
         if (cart[key].qty > 0) {
             msg += `• ${cart[key].name} (x${cart[key].qty}) = ${cart[key].qty * cart[key].price} EGP\n`;
@@ -356,12 +375,12 @@ function sendOrder() {
     }
 
     if (!hasItems) {
-        alert("اختر مشروباتك أولاً");
+        alert("يا فندم اختار المشروبات الأول 😊");
         return;
     }
 
     if (note) msg += `\n💬 ملاحظة: ${note}`;
-    msg += `\n\n💰 الإجمالي: ${total} EGP`;
+    msg += `\n\n💰 الإجمالي النهائي: ${total} EGP`;
 
-    window.open(`https://wa.me/201150782006?text=${encodeURIComponent(msg)}`);
+    window.open(`https://wa.me/201150782006?text=${encodeURIComponent(msg)}`, '_blank');
 }

@@ -32,6 +32,8 @@
             <div class="box" onclick="setPlace('Side B')">Side B</div>
             <div class="box" onclick="setPlace('Bar')">البار (5 كراسي)</div>
             <div class="box" onclick="setPlace('Lounge')">الصالة (3 ترابيزات)</div>
+             <div class="box" onclick="setPlace('برة برة')">برة برة</div>
+            
         </div>
     </section>
 
@@ -49,6 +51,11 @@
         <h2 class="menu-title">LOVERA MENU</h2>
         <div id="items-container"></div>
         <div style="height: 150px;"></div>
+        <!-- حقل مميز للعميل -->
+<div class="special-note">
+    <label for="customer-note">✨ أضف ملاحظة مميزة لمكانك أو طلبك:</label>
+    <textarea id="customer-note" placeholder="مثلاً: أحب الجلوس قريب من النوافذ"></textarea>
+</div>
         <div class="order-footer">
             الإجمالي: <span id="total-price">0</span> EGP
             <button class="send-btn" onclick="handleFinalOrder()">إرسال الطلب</button>

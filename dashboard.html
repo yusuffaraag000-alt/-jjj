@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard | لوحة طلبات لوفيرا</title>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+    <style>
+        body { background: #0a0a0a; color: #f5f5f7; font-family: sans-serif; padding: 20px; }
+        .order-card { background: #1a1a1a; border-right: 4px solid #fff; padding: 20px; margin-bottom: 10px; display: flex; justify-content: space-between; animation: slide 0.5s; }
+        @keyframes slide { from { opacity:0; transform: translateX(20px); } to { opacity:1; transform:0; } }
+        .btn-done { background: #f5f5f7; color: #000; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; }
+        .new-tag { background: red; color: white; padding: 2px 5px; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <h1>📦 طلبات لوفيرا الحالية</h1>
+    <div id="orders-container">انتظار الطلبات الجديدة...</div>
+
+    <audio id="alert-sound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3"></audio>
+
+<script>
+    const firebaseConfig = { databaseURL: "https://YOUR-PROJECT-ID.firebaseio.com" };
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    // استماع للطلبات الجديدة
+    database.ref('orders').on('value', (snapshot) => {
+        const data = snapshot.val();
+        const container = document.getElementById('orders-container');
+        container.innerHTML = '';
+        
+        if(data) document.getElementById('alert-sound').play();
+
+        for(let id in data) {
+            const order = data[id];
+            container.innerHTML += `
+                <div class="order-card">
+                    <div>
+                        <strong>المكان: ${order.location}</strong> <span class="new-tag">جديد</span><br>
+                        <span>الطلب: ${order.details}</span><br>
+                        <small>الوقت: ${order.time}</small>
+                    </div>
+                    <button class="btn-done" onclick="removeOrder('${id}')">تم التحضير</button>
+                </div>
+            `;
+        }
+    });
+
+    function removeOrder(id) {
+        database.ref('orders/' + id).remove();
+    }
+</script>
+</body>
+</html>

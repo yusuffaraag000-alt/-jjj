@@ -1,6 +1,6 @@
 :root {
-    --primary-dark: #0b0b0b;        /* أسود أساسي */
-    --secondary-dark: #1a1a1a;      /* رمادي داكن */
+    --primary-dark: #6e6969;        /* أسود أساسي */
+    --secondary-dark: #424040;      /* رمادي داكن */
     --glass-bg: rgba(255, 255, 255, 0.03);
     --glass-border: rgba(255, 255, 255, 0.08);
     --text-main: #f5f5f7;           /* أبيض */
@@ -324,4 +324,113 @@ body {
     .controls { margin-right: 0; }
     .logo { font-size: 2.5rem; letter-spacing: 5px; }
     .side-logo { width: 45px; top: 15px; left: 15px; }
+}
+.special-note {
+    margin: 20px 0;
+    text-align: right;
+}
+
+.special-note label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.special-note textarea {
+    width: 100%;
+    min-height: 60px;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.05);
+    color: #fff;
+    resize: vertical;
+    font-size: 1rem;
+    font-family: 'Cairo', sans-serif;
+}
+
+.special-note textarea::placeholder {
+    color: #aaa;
+}
+.size-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    border-bottom: 1px solid #eee;
+}
+/* تنسيق كارت الصنف والأحجام */
+.menu-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 15px;
+    margin-bottom: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.item-info {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    color: #fff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 5px;
+}
+
+.size-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    font-size: 0.95rem;
+}
+
+.controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.controls button {
+    background: #fff;
+    color: #000;
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.controls span {
+    min-width: 20px;
+    text-align: center;
+    font-weight: bold;
+}
+
+/* تنسيق منطقة الملاحظات */
+.special-note {
+    margin: 20px;
+    text-align: right;
+}
+
+.special-note textarea {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid #fff;
+    color: #fff;
+    border-radius: 10px;
+    padding: 10px;
+    margin-top: 10px;
+    font-family: 'Cairo', sans-serif;
+}
+.category-title {
+    background: linear-gradient(90deg, #524e43, #777163);
+    color: #000;
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-weight: bold;
+    text-align: center;
+    margin: 30px 10px 20px;
+    box-shadow: 0 4px 15px rgba(7, 6, 3, 0.3);
 }
